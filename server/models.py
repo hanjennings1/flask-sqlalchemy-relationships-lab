@@ -8,16 +8,15 @@ metadata = MetaData(naming_convention={
 
 db = SQLAlchemy(metadata=metadata)
 
-# TASSOCIATION TABLE --
+# ASSOCIATION TABLE --
 session_speakers = db.Table(
     'session_speakers',
     metadata,
-    db.Column('session_id', db.Integer, db.ForeignKey('sessions.id'), primary_key=True)
-    db.Column('speaker_id', db.Integer, db.ForeignKey('speakers.id'), primary_key=True)
+    db.Column('session_id', db.Integer, db.ForeignKey('sessions.id'), primary_key=True),
+    db.Column('speaker_id', db.Integer, db.ForeignKey('speakers.id'), primary_key=True),
 )
 
-
-# TODO: set up relationships for all models
+# --- EVENT CLASS ---
 class Event(db.Model):
     __tablename__ = 'events'
 
@@ -25,22 +24,28 @@ class Event(db.Model):
     name = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
 
+    sessions = db.relationship('Session', back_populates='event', cascade='all, delete-orphan') # links to Session
+
     def __repr__(self):
         return f'<Event {self.id}, {self.name}, {self.location}>'
 
+
+# --- SESSION CLASS ---
 class Session(db.Model):
     __tablename__ = 'sessions'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     start_time = db.Column(db.DateTime)
-    event_id = db.Column(db.Integer)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))    # foreign key
 
+    event = db.relationship('Event', back_populates='sessions')     # links to Event
 
     def __repr__(self):
         return f'<Session {self.id}, {self.title}, {self.start_time}>'
 
 
+# --- SPEAKER CLASS ---
 class Speaker(db.Model):
     __tablename__ = 'speakers'
 
@@ -50,6 +55,8 @@ class Speaker(db.Model):
     def __repr__(self):
         return f'<Speaker {id}, {name}>'
 
+
+# --- BIO CLASS ---
 class Bio(db.Model):
     __tablename__ = 'bios'
 
