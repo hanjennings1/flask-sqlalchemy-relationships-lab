@@ -65,7 +65,22 @@ def get_speakers():
 
 @app.route('/speakers/<int:id>')
 def get_speaker(id):
-    pass
+    speaker = Speaker.query.filter_by(id=id).first()  # find speaker by id (None if missing)
+
+    if not speaker:
+        return jsonify({"error": "Speaker not found"}), 404  # stop here if no speaker
+
+    # use the one-to-one relationship; fall back if the speaker has no bio
+    if speaker.bio:
+        bio_text = speaker.bio.bio_text
+    else:
+        bio_text = "No bio available"
+
+    return jsonify({
+        "id": speaker.id,
+        "name": speaker.name,
+        "bio_text": bio_text,
+    }), 200  # send speaker as JSON with 200 OK status
 
 
 @app.route('/sessions/<int:id>/speakers')
