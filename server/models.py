@@ -52,8 +52,10 @@ class Speaker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
+    bio = db.relationship('Bio', back_populates='speaker', uselist=False, cascade='all, delete-orphan')
+
     def __repr__(self):
-        return f'<Speaker {id}, {name}>'
+        return f'<Speaker {self.id}, {self.name}>'
 
 
 # --- BIO CLASS ---
@@ -62,7 +64,9 @@ class Bio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     bio_text = db.Column(db.Text, nullable=False)
-    speaker_id = db.Column(db.Integer)
+    speaker_id = db.Column(db.Integer, db.ForeignKey('speakers.id'))    # foreign key
+
+    speaker = db.relationship('Speaker', back_populates='bio')
 
     def __repr__(self):
-        return f'<Bio {id}, {bio_text}>'
+        return f'<Bio {self.id}, {self.bio_text}>'
