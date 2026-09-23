@@ -18,7 +18,17 @@ db.init_app(app)
 
 @app.route('/events')
 def get_events():
-    pass
+    events = Event.query.all()      # get all events from the database
+
+    events_list = []                # will hold each event as a dict
+    for event in events:
+        events_list.append({
+            "id": event.id,
+            "name": event.name,
+            "location": event.location,
+        })
+
+    return jsonify(events_list), 200    # send list as JSON with 200 OK status
 
 
 @app.route('/events/<int:id>/sessions')
