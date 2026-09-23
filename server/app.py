@@ -51,7 +51,16 @@ def get_event_sessions(id):
 
 @app.route('/speakers')
 def get_speakers():
-    pass
+    speakers = Speaker.query.all()      # get all speakers from the database
+
+    speakers_list = []                  # will hold each speaker as a dict
+    for speaker in speakers:
+        speakers_list.append({
+            "id": speaker.id,
+            "name": speaker.name,
+        })
+
+    return jsonify(speakers_list), 200  # send list as JSON with 200 OK status
 
 
 @app.route('/speakers/<int:id>')
