@@ -85,7 +85,26 @@ def get_speaker(id):
 
 @app.route('/sessions/<int:id>/speakers')
 def get_session_speakers(id):
-    pass
+    s = Session.query.filter_by(id=id).first()  # find session by id (None if missing)
+
+    if not s:
+        return jsonify({"error": "Session not found"}), 404  # stop here if no session
+
+    speakers_list = []          # will hold each speaker as a dict
+    for speaker in s.speakers:  # use the many-to-many relationship
+        # fall back if this speaker has no bio
+        if speaker.bio:
+            bio_text = speaker.bio.bio_text
+        else:
+            bio_text = "No bio available"
+
+        speakers_list.append({
+            "id": speaker.id,
+            "name": speaker.name,
+            "bio_text": bio_text,
+        })
+
+    return jsonify(speakers_list), 200  # send list as JSON with 200 OK status
 
 
 if __name__ == '__main__':
