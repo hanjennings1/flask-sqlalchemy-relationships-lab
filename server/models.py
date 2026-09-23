@@ -8,7 +8,13 @@ metadata = MetaData(naming_convention={
 
 db = SQLAlchemy(metadata=metadata)
 
-# TODO: add association table
+# TASSOCIATION TABLE --
+session_speakers = db.Table(
+    'session_speakers',
+    metadata,
+    db.Column('session_id', db.Integer, db.ForeignKey('sessions.id'), primary_key=True)
+    db.Column('speaker_id', db.Integer, db.ForeignKey('speakers.id'), primary_key=True)
+)
 
 
 # TODO: set up relationships for all models
