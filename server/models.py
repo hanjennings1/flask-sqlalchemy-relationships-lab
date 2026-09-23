@@ -40,6 +40,7 @@ class Session(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))    # foreign key
 
     event = db.relationship('Event', back_populates='sessions')     # links to Event
+    speakers = db.relationship('Speaker', secondary=session_speakers, back_populates='sessions')    # links to Speaker
 
     def __repr__(self):
         return f'<Session {self.id}, {self.title}, {self.start_time}>'
@@ -52,7 +53,8 @@ class Speaker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
-    bio = db.relationship('Bio', back_populates='speaker', uselist=False, cascade='all, delete-orphan')
+    bio = db.relationship('Bio', back_populates='speaker', uselist=False, cascade='all, delete-orphan') # links to bio
+    sessions = db.relationship('Session', secondary=session_speakers, back_populates='speakers')    # links to Session
 
     def __repr__(self):
         return f'<Speaker {self.id}, {self.name}>'
@@ -66,7 +68,7 @@ class Bio(db.Model):
     bio_text = db.Column(db.Text, nullable=False)
     speaker_id = db.Column(db.Integer, db.ForeignKey('speakers.id'))    # foreign key
 
-    speaker = db.relationship('Speaker', back_populates='bio')
+    speaker = db.relationship('Speaker', back_populates='bio')  # links to Speaker
 
     def __repr__(self):
         return f'<Bio {self.id}, {self.bio_text}>'
