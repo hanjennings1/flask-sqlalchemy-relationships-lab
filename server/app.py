@@ -14,7 +14,6 @@ app.json.compact = False
 migrate = Migrate(app, db)
 db.init_app(app)
 
-# TODO: add functionality to all routes
 
 @app.route('/events')
 def get_events():
