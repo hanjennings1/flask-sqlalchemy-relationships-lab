@@ -33,7 +33,20 @@ def get_events():
 
 @app.route('/events/<int:id>/sessions')
 def get_event_sessions(id):
-    pass
+    event = Event.query.filter_by(id=id).first()  # find event by id (None if missing)
+
+    if not event:
+        return jsonify({"error": "Event not found"}), 404  # stop here if no event
+
+    sessions_list = []          # will hold each session as a dict
+    for s in event.sessions:    # use the one-to-many relationship
+        sessions_list.append({
+            "id": s.id,
+            "title": s.title,
+            "start_time": s.start_time.isoformat(),  # convert datetime to a JSON-friendly string
+        })
+
+    return jsonify(sessions_list), 200  # send list as JSON with 200 OK status
 
 
 @app.route('/speakers')
